@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Satelite Orbit Visualization</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body class="bg-dark text-light">
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Custom Satelite Orbit Visualization</h1>
+        <p class="lead text-center mb-4">
+            This tools lets you see what your custom satellite orbit would look like around Earth. It is made using Python, specifically Plotly for the visualization, Flask for the web interface, and SSCWS for the data on the ISS satellite. Please note that the stars are only for aesthetic purposes and do not represent actual star positions. The same goes with the Earth texture, which is a pre-loaded image and does not show the proper conditions for the given dates and times.
+        </p>
+        {% if step != 2 %}
+            {% if step == 3 %}
+                <div class="alert alert-success">Plot generated successfully!</div>
+            {% endif %}
+            <form method="POST" action="/" class="mb-5">
+                <input type="hidden" name="step" value="1">
+                <input type="hidden" name="ctimes" value="{{ ctimes }}">
+                <div class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <label for="cstime" class="form-label">Start Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="cstime" name="cstime" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cetime" class="form-label">End Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="cetime" name="cetime" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4 w-100">Next: Enter Coordinates</button>
+            </form>
+        {% else %}
+            <form method="POST" action="/" class="mb-5">
+                <input type="hidden" name="step" value="2">
+                <input type="hidden" name="cstime" value="{{ cstime }}">
+                <input type="hidden" name="cetime" value="{{ cetime }}">
+                <input type="hidden" name="n_points" value="{{ n_points }}">
+                <input type="hidden" name="ctimes" value="{{ ctimes }}">
+                <div class="alert alert-info">Please enter exactly <b>{{ n_points }}</b> values for each coordinate (comma separated).</div>
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="cxc" class="form-label">X Points (comma separated)</label>
+                        <input type="text" class="form-control" id="cxc" name="cxc" required placeholder="Enter {{ n_points }} X values">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="cyc" class="form-label">Y Points (comma separated)</label>
+                        <input type="text" class="form-control" id="cyc" name="cyc" required placeholder="Enter {{ n_points }} Y values">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="czc" class="form-label">Z Points (comma separated)</label>
+                        <input type="text" class="form-control" id="czc" name="czc" required placeholder="Enter {{ n_points }} Z values">
+                    </div>
+                </div>
+                <div class="row g-3 mt-3">
+                    <div class="col-md-12">
+                        <label for="name" class="form-label">Trajectory Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="Custom Trajectory">
+                    </div>
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="showiss" name="showiss">
+                    <label class="form-check-label" for="showiss">Show ISS Orbit</label>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4 w-100">Generate Plot</button>
+            </form>
+        {% endif %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
